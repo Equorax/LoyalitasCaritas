@@ -17,7 +17,7 @@ class RekamanTransaksi extends Model
     protected $fillable = [
         'pelanggan_id',
         'id_transaksi_input',
-        'transaksi_id', // Bisa null jika tidak cocok
+        'ID_Transaksi', // Bisa null jika tidak cocok
         'diskon_diberikan',
         'input_status', // <-- Tambahkan ini
     ];
@@ -37,6 +37,6 @@ class RekamanTransaksi extends Model
 
     public function transaksi()
     {
-        return $this->belongsTo(Transaksi::class, 'transaksi_id', 'ID_Transaksi');
+        return $this->belongsTo(Transaksi::class, 'ID_Transaksi', 'ID_Transaksi'); // foreign key (nama foreign key di tabel rekaman_transaksi), local key (nama primary key di tabel tranaksi(tabel induk))
     }
 }

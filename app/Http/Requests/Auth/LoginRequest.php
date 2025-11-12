@@ -27,8 +27,21 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email'],
-            'password' => ['required', 'string'],
+            'email' => ['required', 'string', 'email'], // Validasi 'required' untuk email
+            'password' => ['required', 'string'],       // Validasi 'required' untuk password
+        ];
+    }
+
+    /**
+     * Get the custom messages for validator errors.
+     *
+     * @return array
+     */
+    public function messages(): array
+    {
+        return [
+            'email.required' => 'Field Email belum diinputkan',
+            'password.required' => 'Field Password belum diinputkan',
         ];
     }
 
@@ -41,11 +54,16 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
+        // Jika autentikasi gagal karena kredensial salah (bukan karena field kosong, karena itu sudah divalidasi di rules())
+        // Maka tampilkan pesan 'auth.failed' untuk kredensial salah.
+        // Namun, jika kamu ingin pesan khusus untuk kredensial salah, ubah bagian ini:
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
+            // Ganti pesan default untuk 'auth.failed' jika diperlukan, meskipun pesan custom untuk 'required' akan muncul dulu
             throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
+                // 'email' => trans('auth.failed'), // Pesan default untuk kredensial salah
+                'email' => 'Email atau password salah.', // Contoh pesan kustom untuk kredensial salah
             ]);
         }
 

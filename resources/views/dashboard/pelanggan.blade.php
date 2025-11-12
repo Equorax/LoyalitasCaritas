@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-orange-600 leading-tight">
             {{ __('Dashboard Pelanggan') }}
         </h2>
     </x-slot>
@@ -9,7 +9,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <h1 class="text-xl font-bold mb-4">Selamat datang, {{ Auth::user()->pelanggan->Nama_Pelanggan ?? Auth::user()->name }}!</h1>
+                    <h1 class="text-xl font-bold mb-4">Selamat datang di dashboard, {{ Auth::user()->pelanggan->Nama_Pelanggan ?? Auth::user()->name }}!</h1>
 
                     <!-- Jumlah Transaksi Dalam Siklus Diskon -->
                     <div class="mb-6">
@@ -31,7 +31,7 @@
                                 $jumlahTransaksiSiklus = ($sisaSiklus == 0) ? 5 : $sisaSiklus;
                             }
                         @endphp
-                        <div class="bg-blue-500 text-white text-4xl font-bold rounded-lg p-4 text-center">
+                        <div class="bg-sky-700 text-white text-4xl font-bold rounded-lg p-4 text-center">
                             {{ $jumlahTransaksiSiklus }} <!-- Tampilkan jumlah dalam siklus -->
                         </div>
                     </div>

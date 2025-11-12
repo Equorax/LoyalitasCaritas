@@ -16,6 +16,7 @@ class Produk extends Model
         'nama_produk',
         'deskripsi',
         'harga',
+        'kategori', 
     ];
 
     // Relasi: Produk -> DetailTransaksi (One to Many)

@@ -18,32 +18,34 @@ class Transaksi extends Model
 
     protected $fillable = [
         'ID_Transaksi',
-        'karyawan_id', // Pastikan ini merujuk ke ID_Karyawan di tabel karyawan
-        'pelanggan_id', // Pastikan ini merujuk ke ID_Pelanggan di tabel pelanggan
+        'ID_Karyawan', // Pastikan ini merujuk ke ID_Karyawan di tabel karyawan
+        'ID_Pelanggan', // Pastikan ini merujuk ke ID_Pelanggan di tabel pelanggan
         'tanggal',
+        'TotalHarga', // Tambahkan kolom baru
+        'MetodePembayaran',
     ];
 
     // Relasi: Transaksi -> Karyawan (Many to One)
     public function karyawan()
     {
-        return $this->belongsTo(Karyawan::class, 'karyawan_id', 'ID_Karyawan');
+        return $this->belongsTo(Karyawan::class, 'ID_Karyawan', 'ID_Karyawan'); // foreign key, local key
     }
 
     // Relasi: Transaksi -> Pelanggan (Many to One)
     public function pelanggan()
     {
-        return $this->belongsTo(Pelanggan::class, 'pelanggan_id', 'ID_Pelanggan');
+        return $this->belongsTo(Pelanggan::class, 'ID_Pelanggan', 'ID_Pelanggan'); // foreign key, local key
     }
 
     // Relasi: Transaksi -> DetailTransaksi (One to Many)
     public function detailTransaksi()
     {
-        return $this->hasMany(DetailTransaksi::class, 'transaksi_id', 'ID_Transaksi');
+        return $this->hasMany(DetailTransaksi::class, 'transaksi_id', 'ID_Transaksi');// foreign key, local key
     }
 
     // Relasi: Transaksi -> RekamanTransaksi (One to One)
     public function rekamanTransaksi()
     {
-        return $this->hasOne(RekamanTransaksi::class, 'transaksi_id', 'ID_Transaksi');
+        return $this->hasOne(RekamanTransaksi::class, 'ID_Transaksi', 'ID_Transaksi'); // foreign key, local key
     }
 }
