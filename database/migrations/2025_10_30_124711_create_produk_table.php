@@ -12,7 +12,9 @@ return new class extends Migration
             $table->string('nama_produk');
             $table->text('deskripsi')->nullable();
             $table->decimal('harga', 10, 2);
+            $table->string('kategori', 20)->nullable(); // Gunakan nullable() jika tidak selalu wajib diisi saat pembuatan produk
             $table->timestamps();
+            
         });
     }
 

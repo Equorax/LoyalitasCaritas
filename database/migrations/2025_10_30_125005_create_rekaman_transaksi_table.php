@@ -19,13 +19,9 @@ return new class extends Migration
 
             $table->string('id_transaksi_input'); // Input dari pelanggan
             // Foreign Key ke tabel 'transaksi', one-to-one, unik, merujuk ke 'ID_Transaksi'
-            $table->string('transaksi_id')->nullable()->unique();
-            $table->foreign('transaksi_id')
-                  ->references('ID_Transaksi') // Kolom tujuan sekarang adalah 'ID_Transaksi'
-                  ->on('transaksi')             // Tabel tujuan
-                  ->onDelete('set null'); // Jika transaksi dihapus, rekaman tetap ada
+            $table->string('input_status')->default('invalid'); //input status new
 
-            $table->boolean('diskon_diberikan')->default(false);
+           
             $table->timestamps();
         });
     }

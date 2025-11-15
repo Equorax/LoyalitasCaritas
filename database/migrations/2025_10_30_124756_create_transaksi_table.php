@@ -18,12 +18,12 @@ return new class extends Migration
                   ->on('karyawan')             // Tabel tujuan
                   ->onDelete('cascade');
 
-            // Foreign Key ke tabel 'pelanggan', merujuk ke kolom 'ID_Pelanggan'
-            $table->unsignedBigInteger('pelanggan_id');
-            $table->foreign('pelanggan_id')
-                  ->references('ID_Pelanggan') // Kolom tujuan
-                  ->on('pelanggan')             // Tabel tujuan
-                  ->onDelete('cascade');
+
+            $table->string('redeem_status')->default('unredeemed'); // status redeem
+            $table->float('TotalHarga', 20)->nullable(); // Gunakan nullable() jika tidak selalu wajib diisi saat pembuatan transaksi
+
+            // Tambahkan kolom MetodePembayaran
+            $table->enum('MetodePembayaran', ['QRIS', 'CASH'])->nullable();
 
             $table->date('tanggal');
             $table->timestamps();

@@ -3,11 +3,12 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\InputNomorTransaksiController;
 use App\Http\Controllers\KaryawanDashboardController;
+use App\Http\Controllers\UploadTransaksiController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('home'); 
 
 // Ganti route dashboard default untuk redirect berdasarkan role
 Route::get('/dashboard', function () {
@@ -31,6 +32,12 @@ Route::get('/dashboard', function () {
 
 Route::get('/dashboard/karyawan', [KaryawanDashboardController::class, 'index'])
     ->middleware(['auth', 'role:karyawan'])->name('dashboard.karyawan');
+ // Pastikan baris ini ada di atas
+
+Route::middleware(['auth', 'role:karyawan'])->group(function () {
+    Route::get('/upload-transaksi', [UploadTransaksiController::class, 'showForm'])->name('upload.transaksi.form');
+    Route::post('/upload-transaksi', [UploadTransaksiController::class, 'processUpload'])->name('upload.transaksi.process');
+});
 
 // Route khusus Pelanggan
 Route::get('/dashboard/pelanggan', function () {
