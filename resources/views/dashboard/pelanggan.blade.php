@@ -16,6 +16,7 @@
                         <h2 class="text-lg font-semibold mb-2">Jumlah Transaksi Dalam Siklus Diskon</h2>
                         @php
                             // Hitung total transaksi valid seumur hidup pelanggan
+                            // Kita tetap hitung dari rekaman_transaksi untuk logika siklus diskon
                             $totalTransaksiValid = Auth::user()->pelanggan->rekamanTransaksi()->where('input_status', 'VALID')->count();
                             
                             // Hitung sisa transaksi dalam siklus 5 (0-4)
@@ -25,28 +26,28 @@
                             // Jika total 0, tampilkan 0
                             // Jika sisa 0 dan total > 0 (artinya kelipatan 5), tampilkan 5
                             // Jika sisa > 0, tampilkan sisa
-                            
-                            $jumlahTransaksiSiklus = 0;
-                            if ($totalTransaksiValid > 0) {
-                                $jumlahTransaksiSiklus = ($sisaSiklus == 0) ? 5 : $sisaSiklus;
-                            }
+                            $jumlahTransaksiSiklus = ($totalTransaksiValid > 0 && $sisaSiklus == 0) ? 5 : $sisaSiklus;
                         @endphp
                         <div class="bg-sky-700 text-white text-4xl font-bold rounded-lg p-4 text-center">
                             {{ $jumlahTransaksiSiklus }} <!-- Tampilkan jumlah dalam siklus -->
                         </div>
                     </div>
 
-                 
-
                     <!-- Pesan Diskon (Opsional) -->
                     @php
                         // $jumlahTransaksiSiklus sudah dihitung di atas
                         
                         // Transaksi berikutnya untuk mendapatkan diskon (0 berarti baru saja mendapat diskon)
-                        $transaksiBerikutnyaDiskon = 5 - $jumlahTransaksiSiklus;
+                        // Kita hitung berdasarkan modulus: jika siklus 5, berikutnya 0, jika siklus 1, berikutnya 4, dst.
+
+                        $transaksiBerikutnyaDiskon = (5 - $jumlahTransaksiSiklus) % 5;
+
+                        // Jika $jumlahTransaksiSiklus adalah 5, maka (5-5)%5 = 0%5 = 0 -> diskon tersedia
+                        // Jika $jumlahTransaksiSiklus adalah 1, maka (5-1)%5 = 4%5 = 4 -> butuh 4 lagi
+                        // Jika $jumlahTransaksiSiklus adalah 4, maka (5-4)%5 = 1%5 = 1 -> butuh 1 lagi
 
                         // Cek apakah pelanggan baru saja menyelesaikan siklus 5 (total sekarang habis dibagi 5 dan bukan nol)
-                        $baruSajaDapatDiskon = ($totalTransaksiValid > 0 && $jumlahTransaksiSiklus == 5 && $transaksiBerikutnyaDiskon == 0);
+                        $baruSajaDapatDiskon = ($jumlahTransaksiSiklus == 5);
                     @endphp
 
                     @if($baruSajaDapatDiskon)

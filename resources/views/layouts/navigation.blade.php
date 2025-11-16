@@ -26,6 +26,13 @@
                         </x-nav-link>
                     @endif
 
+                     @if(Auth::check() && Auth::user()->isKaryawan())
+                            <!-- Tambahkan link Responsive Tabel Validitas Transaksi -->
+                            <x-nav-link :href="route('validitas.transaksi')" :active="request()->routeIs('validitas.transaksi')">
+                                {{ __('Tabel Validitas Transaksi') }}
+                            </x-nav-link>
+                        @endif
+
                      @if(Auth::user()->isKaryawan())
                                 <x-nav-link :href="route('upload.transaksi.form')" :active="request()->routeIs('upload.transaksi.form')">
                                     {{ __('Upload Transaksi') }}
@@ -100,6 +107,7 @@
                 <x-responsive-nav-link :href="route('dashboard.pelanggan')" :active="request()->routeIs('dashboard.pelanggan')" class="text-white">
                     {{ __('Dashboard') }}
                 </x-responsive-nav-link>
+
                 <x-responsive-nav-link :href="route('input.nomor.transaksi')" :active="request()->routeIs('input.nomor.transaksi')">
                     {{ __('Input Nomor Transaksi') }}
                 </x-responsive-nav-link>
@@ -114,6 +122,13 @@
                 <x-responsive-nav-link :href="route('dashboard.karyawan')" :active="request()->routeIs('dashboard.karyawan')">
                     {{ __('Daftar Pelanggan') }}
                 </x-responsive-nav-link>
+            @endif
+
+            @if(Auth::check() && Auth::user()->isKaryawan())
+                        <!-- Tambahkan link Responsive Tabel Validitas Transaksi -->
+                        <x-responsive-nav-link :href="route('validitas.transaksi')" :active="request()->routeIs('validitas.transaksi')">
+                            {{ __('Tabel Validitas Transaksi') }}
+                        </x-responsive-nav-link>
             @endif
              @if(Auth::user()->isKaryawan())
                         <x-responsive-nav-link :href="route('upload.transaksi.form')" :active="request()->routeIs('upload.transaksi.form')">

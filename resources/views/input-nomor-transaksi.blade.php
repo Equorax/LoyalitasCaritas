@@ -11,6 +11,9 @@
                 <div class="p-6 text-gray-900">
                     <h1 class="text-xl  font-bold mb-4">Selamat datang, {{ Auth::user()->pelanggan->Nama_Pelanggan ?? Auth::user()->name }}!</h1>
                     <p>Masukkan nomor transaksi yang tertera di nota Anda.</p>
+                    <p class="text-orange-500 font-bold mb-3">Untuk akurasi yang lebih optimal input nomor transaksi anda setelah pukul 18.00 WIB atau hari berikutnya </p>
+                    <label class= "font-semibold"> Jika Jumlah transaksi dalam siklus diskon anda belum bertambah silahkan input ulang nomor transaksi anda sekali </label>
+                    
 
                     @if(session('success'))
                         <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4">
@@ -22,10 +25,17 @@
                         @csrf
 
                         <div class="mb-4">
-                            <label for="id_transaksi_input" class="block text-sm font-medium text-gray-700">Nomor Penjualan *</label>
+                            <label for="id_transaksi_input" class="block text-sm font-medium text-gray-700">Nomor Penjualan * </label>
+                            
                             <input type="text" name="id_transaksi_input" id="id_transaksi_input" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" required maxlength="18">
+                            <!-- Tambahkan pesan error khusus untuk prohibited -->
                             @error('id_transaksi_input')
-                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                @if($message == 'Nomor transaksi sudah digunakan dan tercatat.')
+                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                @else
+                                    <!-- Tampilkan error lainnya (misalnya required, string, min, max) -->
+                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                @endif
                             @enderror
                         </div>
 

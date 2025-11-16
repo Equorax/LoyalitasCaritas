@@ -4,6 +4,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\InputNomorTransaksiController;
 use App\Http\Controllers\KaryawanDashboardController;
 use App\Http\Controllers\UploadTransaksiController;
+use App\Http\Controllers\ExportPelangganController;
+use App\Http\Controllers\ValiditasTransaksiController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -37,7 +39,16 @@ Route::get('/dashboard/karyawan', [KaryawanDashboardController::class, 'index'])
 Route::middleware(['auth', 'role:karyawan'])->group(function () {
     Route::get('/upload-transaksi', [UploadTransaksiController::class, 'showForm'])->name('upload.transaksi.form');
     Route::post('/upload-transaksi', [UploadTransaksiController::class, 'processUpload'])->name('upload.transaksi.process');
+    Route::get('/validitas-transaksi', [ValiditasTransaksiController::class, 'index'])->name('validitas.transaksi');
 });
+
+// Tambahkan grup middleware role:karyawan di sekitar route export
+Route::middleware(['auth', 'role:karyawan'])->group(function () {
+    // ... (route upload lainnya jika ada)
+    Route::get('/export-pelanggan', [ExportPelangganController::class, 'export'])->name('export.pelanggan');
+});
+
+
 
 // Route khusus Pelanggan
 Route::get('/dashboard/pelanggan', function () {

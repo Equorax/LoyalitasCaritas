@@ -9,26 +9,27 @@ class Transaksi extends Model
 {
     use HasFactory;
 
-    // Konfigurasi Primary Key karena bukan 'id'
     protected $primaryKey = 'ID_Transaksi';
-    public $incrementing = false; // Karena bukan integer auto-increment
-    protected $keyType = 'string'; // Karena tipe primary key adalah string
+    public $incrementing = false;
+    protected $keyType = 'string';
+    protected $table = 'transaksi';
 
-     protected $table = 'transaksi';
-
+    // Ganti 'ID_Karyawan' menjadi 'karyawan_id'
     protected $fillable = [
         'ID_Transaksi',
-        'ID_Karyawan', // Pastikan ini merujuk ke ID_Karyawan di tabel karyawan
+        'karyawan_id', // <-- Diubah dari 'ID_Karyawan'
         'tanggal',
-        'TotalHarga', // Tambahkan kolom baru
+        'TotalHarga',
         'MetodePembayaran',
         'redeem_status',
     ];
 
+
     // Relasi: Transaksi -> Karyawan (Many to One)
     public function karyawan()
     {
-        return $this->belongsTo(Karyawan::class, 'ID_Karyawan', 'karyawan_id'); // foreign key, local key
+        // foreign key di tabel transaksi, local key di tabel karyawan
+        return $this->belongsTo(Karyawan::class, 'karyawan_id', 'ID_Karyawan');
     }
 
     // Relasi: Transaksi -> Pelanggan (Many to One)

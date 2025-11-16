@@ -7,7 +7,7 @@ use App\Models\Transaksi;
 use App\Models\Pelanggan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rule; // Import Rule untuk prohibitedIf
 
 class InputNomorTransaksiController extends Controller
 {
@@ -18,36 +18,61 @@ class InputNomorTransaksiController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $pelanggan = Auth::user()->pelanggan;
+        $input_transaksi = $request->input('id_transaksi_input');
+
+        // Cek apakah ID ini SUDAH PERNAH dimasukkan oleh pelanggan ini sebelumnya DAN statusnya SEKARANG adalah VALID
+        $rekamanSebelumnyaValid = $pelanggan->rekamanTransaksi()
+            ->where('id_transaksi_input', $input_transaksi)
+            ->where('input_status', 'VALID') // Hanya cek jika sekarang statusnya VALID
+            ->exists();
+
+        // Definisikan aturan validasi
+        $rules = [
             'id_transaksi_input' => [
                 'required',
                 'string',
                 'min:17',
                 'max:17',
-                Rule::unique('rekaman_transaksi', 'id_transaksi_input')->where(function ($query) {
-                    return $query->where('pelanggan_id', Auth::user()->pelanggan->ID_Pelanggan);
-                }),
+                // Tambahkan aturan untuk mencegah input ulang yang SUDAH VALID sebelumnya
+                Rule::prohibitedIf(
+                    fn() => $rekamanSebelumnyaValid // Jika hasil cek di atas true
+                    // Pesan error sekarang akan ditentukan di messages di bawah
+                ),
             ],
-        ]);
+        ];
 
-        $pelanggan = Auth::user()->pelanggan;
-        $input_transaksi = $validated['id_transaksi_input'];
+        // Definisikan pesan error kustom
+        $messages = [
+            'id_transaksi_input.prohibited' => 'Nomor transaksi sudah digunakan dan tercatat.', // Pesan khusus untuk aturan prohibited
+        ];
 
-        // Cari transaksi di tabel transaksi berdasarkan id_transaksi_input
+        // Jalankan validasi
+        $validated = $request->validate($rules, $messages);
+
+        // Jika validasi lolos, lanjutkan dengan logika sebelumnya untuk Skenario 1 & 2
+        $rekamanSebelumnya = $pelanggan->rekamanTransaksi()
+            ->where('id_transaksi_input', $input_transaksi)
+            ->first();
+
         $transaksi = Transaksi::where('ID_Transaksi', $input_transaksi)->first();
 
-        // Tentukan status input dan diskon
-        $inputStatus = 'INVALID'; // Default status adalah 'INVALID'
+        $inputStatus = 'INVALID'; // Default status
         $diskonDiberikan = false;
-        $transaksiId = null;
+        $pesan = 'Nomor transaksi berhasil disimpan.';
 
         if ($transaksi) {
-            $inputStatus = 'VALID'; // Ubah status menjadi 'VALID' jika cocok
-            $transaksiId = $transaksi->ID_Transaksi;
+            $inputStatus = 'VALID';
 
-            // Hitung jumlah transaksi VALID sebelumnya YANG TELAH DISIMPAN DI DB dengan status 'VALID'
+            $bolehRedeem = ($transaksi->redeem_status === 'unredeemed' && (!$rekamanSebelumnya || $rekamanSebelumnya->input_status !== 'VALID'));
+
+            if ($bolehRedeem) {
+                $transaksi->update(['redeem_status' => 'redeemed']);
+                $pelanggan->increment('Frekuensi_Pembelian');
+            }
+
             $jumlahTransaksiValidSebelumnya = $pelanggan->rekamanTransaksi()
-                ->where('input_status', 'VALID') // Gunakan kolom yang sekarang ada di DB
+                ->where('input_status', 'VALID')
                 ->count();
 
             $jumlahTotalTransaksiValid = $jumlahTransaksiValidSebelumnya + 1;
@@ -55,23 +80,22 @@ class InputNomorTransaksiController extends Controller
             if ($jumlahTotalTransaksiValid % 5 == 0) {
                 $diskonDiberikan = true;
             }
+
+            $pesan = $diskonDiberikan ? 'Nomor transaksi valid dan Anda mendapatkan diskon pada transaksi ke-5 Anda!' : 'Nomor transaksi valid.';
+        } else {
+             $pesan = 'Nomor transaksi tidak ditemukan di sistem.';
         }
 
-        // Simpan rekaman transaksi
-        // SEKARANG kita bisa menyertakan 'input_status' karena kolomnya ada di DB dan kita atur nilainya
-        RekamanTransaksi::create([
-            'pelanggan_id' => $pelanggan->ID_Pelanggan,
-            'id_transaksi_input' => $input_transaksi,
-            'transaksi_id' => $transaksiId,
-            'diskon_diberikan' => $diskonDiberikan,
-            'input_status' => $inputStatus, // <-- Sekarang kita simpan status ke DB
-        ]);
-
-        $pesan = 'Nomor transaksi berhasil disimpan.';
-        if ($inputStatus === 'INVALID') {
-             $pesan = 'Nomor transaksi tidak ditemukan di sistem.';
-        } elseif ($diskonDiberikan) {
-             $pesan = 'Nomor transaksi valid dan Anda mendapatkan diskon pada transaksi ini!';
+        if ($rekamanSebelumnya) {
+            if ($rekamanSebelumnya->input_status !== 'VALID' && $inputStatus === 'VALID') {
+                $rekamanSebelumnya->update(['input_status' => $inputStatus]);
+            }
+        } else {
+            RekamanTransaksi::create([
+                'pelanggan_id' => $pelanggan->ID_Pelanggan,
+                'id_transaksi_input' => $input_transaksi,
+                'input_status' => $inputStatus,
+            ]);
         }
 
         return redirect()->route('dashboard.pelanggan')->with('success', $pesan);
