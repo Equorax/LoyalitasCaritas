@@ -5,7 +5,8 @@
             <div class="flex">
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <!-- Link Dashboard dan Input Nomor Transaksi untuk Pelanggan -->
+
+                <!-- Link Dashboard dan Input Nomor Transaksi untuk Pelanggan -->
                     @if(Auth::check() && Auth::user()->isPelanggan())
                         <x-nav-link :href="route('dashboard.pelanggan')" :active="request()->routeIs('dashboard.pelanggan')">
                             {{ __('Dashboard') }}
@@ -19,24 +20,36 @@
                         @endauth
                     @endif
 
-                    <!-- Link Daftar Pelanggan untuk Karyawan -->
+                <!-- Link Daftar Pelanggan untuk Karyawan -->
                     @if(Auth::check() && Auth::user()->isKaryawan())
                         <x-nav-link :href="route('dashboard.karyawan')" :active="request()->routeIs('dashboard.karyawan')">
                             {{ __('Daftar Pelanggan') }}
                         </x-nav-link>
                     @endif
 
-                     @if(Auth::check() && Auth::user()->isKaryawan())
-                            <!-- Tambahkan link Responsive Tabel Validitas Transaksi -->
-                            <x-nav-link :href="route('validitas.transaksi')" :active="request()->routeIs('validitas.transaksi')">
-                                {{ __('Tabel Validitas Transaksi') }}
-                            </x-nav-link>
-                        @endif
+                    @if(Auth::check() && Auth::user()->isKaryawan())
+                        <!-- Tambahkan link Responsive Tabel Validitas Transaksi -->
+                        <x-nav-link :href="route('validitas.transaksi')" :active="request()->routeIs('validitas.transaksi')">
+                            {{ __('Tabel Status Validitas Transaksi') }}
+                        </x-nav-link>
+                    @endif
+
+                    @if(Auth::check() && Auth::user()->isKaryawan())
+                    <x-nav-link :href="route('jumlah.transaksi.valid')" :active="request()->routeIs('jumlah.transaksi.valid')">
+                                {{ __('Jumlah Transaksi Valid') }}
+                    </x-nav-link>
+                    @endif
+
+                    @if(Auth::user()->isKaryawan())
+                        <x-nav-link :href="route('grafik.index')" :active="request()->routeIs('grafik.index')">
+                            {{ __('Grafik') }}
+                        </x-nav-link>
+                    @endif
 
                      @if(Auth::user()->isKaryawan())
-                                <x-nav-link :href="route('upload.transaksi.form')" :active="request()->routeIs('upload.transaksi.form')">
-                                    {{ __('Upload Transaksi') }}
-                                </x-nav-link>
+                        <x-nav-link :href="route('upload.transaksi.form')" :active="request()->routeIs('upload.transaksi.form')">
+                            {{ __('Upload Transaksi') }}
+                        </x-nav-link>
                      @endif
                 </div>
             </div>
@@ -102,6 +115,7 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1 bg-sky-700">
+
             <!-- Link Responsive untuk Pelanggan -->
             @if(Auth::check() && Auth::user()->isPelanggan())
                 <x-responsive-nav-link :href="route('dashboard.pelanggan')" :active="request()->routeIs('dashboard.pelanggan')" class="text-white">
@@ -124,17 +138,35 @@
                 </x-responsive-nav-link>
             @endif
 
+
+
+
             @if(Auth::check() && Auth::user()->isKaryawan())
-                        <!-- Tambahkan link Responsive Tabel Validitas Transaksi -->
-                        <x-responsive-nav-link :href="route('validitas.transaksi')" :active="request()->routeIs('validitas.transaksi')">
-                            {{ __('Tabel Validitas Transaksi') }}
-                        </x-responsive-nav-link>
+                <!-- Tambahkan link Responsive Tabel Validitas Transaksi -->
+                <x-responsive-nav-link :href="route('validitas.transaksi')" :active="request()->routeIs('validitas.transaksi')">
+                    {{ __('Tabel Status Validitas Transaksi') }}
+                </x-responsive-nav-link>
             @endif
+
+            @if(Auth::check() && Auth::user()->isKaryawan())
+                <x-responsive-nav-link :href="route('jumlah.transaksi.valid')" :active="request()->routeIs('jumlah.transaksi.valid')">
+                    {{ __('Jumlah Transaksi Valid') }}
+                </x-responsive-nav-link>
+            @endif
+
+            @if(Auth::user()->isKaryawan())
+                <x-responsive-nav-link :href="route('grafik.index')" :active="request()->routeIs('grafik.index')">
+                    {{ __('Grafik') }}
+                </x-responsive-nav-link>
+            @endif
+            
              @if(Auth::user()->isKaryawan())
-                        <x-responsive-nav-link :href="route('upload.transaksi.form')" :active="request()->routeIs('upload.transaksi.form')">
-                            {{ __('Upload Transaksi') }}
-                        </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('upload.transaksi.form')" :active="request()->routeIs('upload.transaksi.form')">
+                    {{ __('Upload Transaksi') }}
+                </x-responsive-nav-link>
             @endif
+
+
         </div>
 
         <!-- Responsive Settings Options -->

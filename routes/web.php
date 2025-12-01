@@ -6,6 +6,8 @@ use App\Http\Controllers\KaryawanDashboardController;
 use App\Http\Controllers\UploadTransaksiController;
 use App\Http\Controllers\ExportPelangganController;
 use App\Http\Controllers\ValiditasTransaksiController;
+use App\Http\Controllers\JumlahTransaksiValidController;
+use App\Http\Controllers\GrafikController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -40,6 +42,9 @@ Route::middleware(['auth', 'role:karyawan'])->group(function () {
     Route::get('/upload-transaksi', [UploadTransaksiController::class, 'showForm'])->name('upload.transaksi.form');
     Route::post('/upload-transaksi', [UploadTransaksiController::class, 'processUpload'])->name('upload.transaksi.process');
     Route::get('/validitas-transaksi', [ValiditasTransaksiController::class, 'index'])->name('validitas.transaksi');
+    Route::get('/jumlah-transaksi-valid', [JumlahTransaksiValidController::class, 'index'])->name('jumlah.transaksi.valid');
+    Route::get('/grafik', [GrafikController::class, 'index'])->name('grafik.index');
+
 });
 
 // Tambahkan grup middleware role:karyawan di sekitar route export
