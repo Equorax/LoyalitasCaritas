@@ -40,11 +40,11 @@
                             const ctxTransaksi = document.getElementById('transaksiChart').getContext('2d');
                             const transaksiChart = new Chart(ctxTransaksi, {
                                 type: 'bar', // Gunakan tipe 'bar' untuk bar chart
-                                data: { // <-- DIPERBAIKI: Tambahkan 'data:'
+                                data: {
                                     labels: labelsTransaksi, // Label bulan/tahun
                                     datasets: [{
                                         label: 'Jumlah Transaksi',
-                                        data: dataTransaksi, // <-- DIPERBAIKI: Tambahkan 'data:'
+                                        data: dataTransaksi, // Data jumlah transaksi
                                         backgroundColor: 'rgba(54, 162, 235, 0.2)', // Warna fill
                                         borderColor: 'rgba(54, 162, 235, 1)', // Warna border
                                         borderWidth: 1
@@ -60,7 +60,18 @@
                                     },
                                     scales: {
                                         y: {
-                                            beginAtZero: true // Mulai sumbu Y dari 0
+                                            beginAtZero: true, // Mulai sumbu Y dari 0
+                                            ticks: {
+                                                // Callback untuk memastikan hanya angka bulat yang ditampilkan
+                                                callback: function(value) {
+                                                    // Jika value adalah bilangan bulat, kembalikan sebagai string
+                                                    if (Number.isInteger(value)) {
+                                                        return value.toString();
+                                                    }
+                                                    // Jika bukan bilangan bulat, kembalikan string kosong (tidak ditampilkan)
+                                                    return '';
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -70,11 +81,11 @@
                             const ctxPelanggan = document.getElementById('pelangganChart').getContext('2d');
                             const pelangganChart = new Chart(ctxPelanggan, {
                                 type: 'bar', // Gunakan tipe 'bar' untuk bar chart
-                                data: { // <-- DIPERBAIKI: Tambahkan 'data:'
+                                data: {
                                     labels: labelsPelanggan, // Label bulan/tahun
                                     datasets: [{
                                         label: 'Jumlah Pendaftaran',
-                                        data: dataPelanggan, // <-- DIPERBAIKI: Tambahkan 'data:'
+                                        data: dataPelanggan, // Data jumlah pendaftaran
                                         backgroundColor: 'rgba(75, 192, 192, 0.2)', // Warna fill
                                         borderColor: 'rgba(75, 192, 192, 1)', // Warna border
                                         borderWidth: 1
@@ -90,12 +101,23 @@
                                     },
                                     scales: {
                                         y: {
-                                            beginAtZero: true // Mulai sumbu Y dari 0
+                                            beginAtZero: true, // Mulai sumbu Y dari 0
+                                            ticks: {
+                                                // Callback untuk memastikan hanya angka bulat yang ditampilkan
+                                                callback: function(value) {
+                                                    // Jika value adalah bilangan bulat, kembalikan sebagai string
+                                                    if (Number.isInteger(value)) {
+                                                        return value.toString();
+                                                    }
+                                                    // Jika bukan bilangan bulat, kembalikan string kosong (tidak ditampilkan)
+                                                    return '';
+                                                }
+                                            }
                                         }
                                     }
                                 }
                             });
-                        }); // <-- DIPERBAIKI: Kurung kurawal dan kurung biasa penutup untuk fungsi DOMContentLoaded
+                        });
                     </script>
 
                 </div>
