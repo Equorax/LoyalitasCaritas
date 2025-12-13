@@ -56,8 +56,7 @@ class ValiditasTransaksiController extends Controller
                 $query->whereDate('transaksi.tanggal', '<=', $tanggal_selesai);
             }
            
-            $query->orderBy('transaksi.ID_Transaksi', 'asc')
-              ->orderBy('transaksi.tanggal', 'desc');// Ambil semua data
+            $query->orderBy('transaksi.tanggal', 'asc');// Ambil semua data
               
             $transaksiData = $query->get();
         return view('validitas-transaksi.index', compact('transaksiData', 'tanggal_mulai', 'tanggal_selesai'));
